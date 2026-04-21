@@ -1,26 +1,132 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap");
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-base: #0e0c0a;
+  --bg-surface: #161310;
+  --bg-raised: #1e1a15;
+  --bg-overlay: #26211a;
+
+  /* Gold/Bronze accents */
+  --gold-bright: #c9a84c;
+  --gold-mid: #a07830;
+  --gold-dim: #6b4f1e;
+  --gold-subtle: #2e2318;
+
+  /* Text */
+  --text-primary: #e8dcc8;
+  --text-secondary: #a89070;
+  --text-muted: #6b5a45;
+  --text-inverse: #0e0c0a;
+
+  /* Borders */
+  --border-gold: #6b4f1e;
+  --border-subtle: #2a2218;
+
+  /* Status colours */
+  --status-good: #4a7c4e;
+  --status-warn: #7c6b2a;
+  --status-bad: #7c2a2a;
+
+  /* Typography */
+  --font-display: "Cinzel", serif;
+  --font-body: "Crimson Pro", serif;
+
+  /* Spacing */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
+  /* Transitions */
+  --transition: 150ms ease;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-mid);
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gold-bright);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.2rem;
+}
+h4 {
+  font-size: 1rem;
+}
+
+a {
+  color: var(--gold-bright);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--text-primary);
+}
+
+/* Gold divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-gold);
+  margin: 1.5rem 0;
+}
+
+/* Utility */
+.text-muted {
+  color: var(--text-muted);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-gold {
+  color: var(--gold-bright);
 }
