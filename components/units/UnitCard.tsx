@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { UnitSummaryDTO } from "@/lib/types";
+import { UnitVariantSummaryDTO } from "@/lib/types";
 import Badge from "@/components/common/Badge";
 
 interface UnitCardProps {
-  unit: UnitSummaryDTO;
+  unit: UnitVariantSummaryDTO;
   raceSlug: string;
 }
 
@@ -38,10 +38,9 @@ export default function UnitCard({ unit, raceSlug }: UnitCardProps) {
                 transition-all duration-150
             "
     >
-      {/* Picture */}
       <div
         className="
-                w-14 h-14 shrink-0 rounded-sm overflow-hidden
+                w-14 h-14 flex-shrink-0 rounded-sm overflow-hidden
                 bg-bg-overlay border border-border-subtle
                 flex items-center justify-center
             "
@@ -57,15 +56,9 @@ export default function UnitCard({ unit, raceSlug }: UnitCardProps) {
         )}
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span
-            className="
-                        font-display text-[0.6rem] font-bold tracking-widest
-                        text-text-muted uppercase
-                    "
-          >
+          <span className="font-display text-[0.6rem] font-bold tracking-widest text-text-muted uppercase">
             Tier {TIER_LABEL[unit.tier] ?? unit.tier}
           </span>
           <Badge
@@ -73,7 +66,6 @@ export default function UnitCard({ unit, raceSlug }: UnitCardProps) {
             variant={CATEGORY_TYPE_VARIANT[unit.categoryType] ?? "default"}
           />
         </div>
-
         <p
           className="
                     font-display text-sm font-semibold tracking-wide
@@ -83,7 +75,6 @@ export default function UnitCard({ unit, raceSlug }: UnitCardProps) {
         >
           {unit.name}
         </p>
-
         {unit.category && (
           <p className="text-text-muted text-xs mt-0.5 truncate">
             {unit.category}
@@ -91,19 +82,12 @@ export default function UnitCard({ unit, raceSlug }: UnitCardProps) {
         )}
       </div>
 
-      {/* Role */}
-      <div className="shrink-0 text-right">
-        <span
-          className="
-                    font-display text-[0.6rem] tracking-widest
-                    text-text-muted uppercase
-                "
-        >
+      <div className="flex-shrink-0 text-right">
+        <span className="font-display text-[0.6rem] tracking-widest text-text-muted uppercase">
           {unit.role.replace(/_/g, " ")}
         </span>
       </div>
 
-      {/* Gold left border on hover */}
       <div
         className="
                 absolute left-0 top-0 bottom-0 w-0.5 rounded-l-md

@@ -3,33 +3,42 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { RaceDTO } from "@/lib/types";
 import AdminFormWrapper from "@/components/admin/AdminFormWrapper";
-import { AdminFormField, AdminInput } from "@/components/admin/AdminFormField";
+import {
+  AdminFormField,
+  AdminInput,
+  AdminTextarea,
+} from "@/components/admin/AdminFormField";
 
-interface RaceFormProps {
+interface LoreFormProps {
   id?: number;
 }
 
-export default function RaceForm({ id }: RaceFormProps) {
+export default function LoreForm({ id }: LoreFormProps) {
   const router = useRouter();
   const isEdit = id !== undefined;
   const [isLoading, setIsLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", slug: "" });
+  const [form, setForm] = useState({ name: "", slug: "", description: "" });
 
   useEffect(() => {
     if (isEdit) {
-      // Find by id — fetch all and filter since we don't have findById for races
-      api.races.findAll().then((races) => {
-        const race = races.find((r) => r.id === id);
-        if (race) setForm({ name: race.name, slug: race.slug });
+      api.lores.findAll().then((lores) => {
+        const lore = lores.find((l) => l.id === id);
+        if (lore)
+          api.lores.findBySlug(lore.slug).then((full) => {
+            setForm({
+              name: full.name,
+              slug: full.slug,
+              description: full.description ?? "",
+            });
+          });
       });
     }
   }, [id, isEdit]);
 
-  // Auto-generate slug from name
   const handleNameChange = (name: string) => {
     setForm((prev) => ({
+      ...prev,
       name,
       slug: isEdit
         ? prev.slug
@@ -45,11 +54,11 @@ export default function RaceForm({ id }: RaceFormProps) {
     setIsLoading(true);
     try {
       if (isEdit) {
-        await api.races.update(id, form);
+        await api.lores.update(id, form);
       } else {
-        await api.races.create(form);
+        await api.lores.create(form);
       }
-      router.push("/admin/races");
+      router.push("/admin/lores");
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +66,8 @@ export default function RaceForm({ id }: RaceFormProps) {
 
   return (
     <AdminFormWrapper
-      title={isEdit ? "Edit Race" : "New Race"}
-      backHref="/admin/races"
+      title={isEdit ? "Edit Lore" : "New Lore"}
+      backHref="/admin/lores"
       onSubmit={handleSubmit}
       isLoading={isLoading}
     >
@@ -66,23 +75,27 @@ export default function RaceForm({ id }: RaceFormProps) {
         <AdminInput
           value={form.name}
           onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="e.g. Greenskins"
+          placeholder="e.g. Lore of Fire"
           required
         />
       </AdminFormField>
-
-      <AdminFormField
-        label="Slug"
-        required
-        hint="Auto-generated from name. Used in URLs."
-      >
+      <AdminFormField label="Slug" required hint="Auto-generated from name.">
         <AdminInput
           value={form.slug}
           onChange={(e) =>
             setForm((prev) => ({ ...prev, slug: e.target.value }))
           }
-          placeholder="e.g. greenskins"
+          placeholder="e.g. lore-of-fire"
           required
+        />
+      </AdminFormField>
+      <AdminFormField label="Description">
+        <AdminTextarea
+          value={form.description}
+          onChange={(e) =>
+            setForm((prev) => ({ ...prev, description: e.target.value }))
+          }
+          placeholder="Description of this lore..."
         />
       </AdminFormField>
     </AdminFormWrapper>

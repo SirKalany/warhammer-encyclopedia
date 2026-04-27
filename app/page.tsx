@@ -4,15 +4,13 @@ const SECTIONS = [
   {
     href: "/factions",
     label: "Factions",
-    description:
-      "Browse all races and their playable factions across the world.",
+    description: "Browse all races and their factions across the world.",
     icon: "⚑",
   },
   {
     href: "/units",
     label: "Units",
-    description:
-      "Explore full unit rosters with detailed statistics and abilities.",
+    description: "Explore full unit rosters with detailed statistics and abilities.",
     icon: "⚔",
   },
   {
@@ -30,15 +28,13 @@ const SECTIONS = [
   {
     href: "/spells",
     label: "Spells",
-    description:
-      "Browse lores of magic and their spells.",
+    description: "Browse lores of magic and their spells.",
     icon: "✧",
   },
   {
     href: "/items",
     label: "Items",
-    description:
-      "Find weapons, armour, talismans and arcane items for your lords.",
+    description: "Find weapons, armour, talismans and arcane items for your lords.",
     icon: "◈",
   },
 ];

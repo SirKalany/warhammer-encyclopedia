@@ -2,24 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { AbilitySummaryDTO } from "@/lib/types";
+import { ImbuementDTO } from "@/lib/types";
 import AdminTable from "@/components/admin/AdminTable";
 import DeleteModal from "@/components/admin/DeleteModal";
-import Badge from "@/components/common/Badge";
 import Link from "next/link";
 
-export default function AdminAbilitiesPage() {
-  const [items, setItems] = useState<AbilitySummaryDTO[]>([]);
-  const [deleteTarget, setDeleteTarget] = useState<AbilitySummaryDTO | null>(
-    null,
-  );
+export default function AdminImbuementsPage() {
+  const [items, setItems] = useState<ImbuementDTO[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<ImbuementDTO | null>(null);
 
   useEffect(() => {
-    api.abilities.findAll().then(setItems);
+    api.imbuements.findAll().then(setItems);
   }, []);
 
   const handleDelete = async (id: number) => {
-    await api.abilities.delete(id);
+    await api.imbuements.delete(id);
     setItems((prev) => prev.filter((i) => i.id !== id));
     setDeleteTarget(null);
   };
@@ -27,12 +24,12 @@ export default function AdminAbilitiesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl">Abilities</h1>
+        <h1 className="text-2xl">Imbuements</h1>
         <Link
-          href="/admin/abilities/new"
+          href="/admin/imbuements/new"
           className="font-display text-xs tracking-widest uppercase px-4 py-2 bg-gold-subtle border border-gold-bright text-gold-bright rounded-sm hover:bg-gold-dim hover:text-text-primary transition-all duration-150 no-underline"
         >
-          + Add Ability
+          + Add Imbuement
         </Link>
       </div>
       <AdminTable
@@ -40,21 +37,23 @@ export default function AdminAbilitiesPage() {
         columns={[
           { label: "Name", render: (i) => i.name },
           {
-            label: "Type",
+            label: "Description",
             render: (i) => (
-              <Badge label={i.type.replace(/_/g, " ")} variant="default" />
+              <span className="text-text-muted text-xs">
+                {i.description ?? "—"}
+              </span>
             ),
           },
           {
-            label: "Slug",
+            label: "Icon",
             render: (i) => (
               <span className="text-text-muted font-mono text-xs">
-                {i.slug}
+                {i.icon ?? "—"}
               </span>
             ),
           },
         ]}
-        editPath={(i) => `/admin/abilities/${i.id}/edit`}
+        editPath={(i) => `/admin/imbuements/${i.id}/edit`}
         onDelete={(id) =>
           setDeleteTarget(items.find((i) => i.id === id) ?? null)
         }

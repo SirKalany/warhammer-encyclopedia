@@ -66,31 +66,19 @@ export type ItemRarity =
 export type ClimateStatus = "HABITABLE" | "UNPLEASANT" | "UNINHABITABLE";
 
 // ============================================================
-// Shared
+// Game Version
 // ============================================================
 
-export interface ImbuementDTO {
-  id: number;
-  name: string;
-  description: string | null;
-  icon: string | null;
-}
-
-export interface UnitAttributeDTO {
-  id: number;
-  name: string;
-  description: string | null;
-}
-
-// ============================================================
-// Race
-// ============================================================
-
-export interface RaceSummaryDTO {
+export interface GameVersionDTO {
   id: number;
   name: string;
   slug: string;
+  icon: string | null;
 }
+
+// ============================================================
+// Identity DTOs
+// ============================================================
 
 export interface RaceDTO {
   id: number;
@@ -98,23 +86,201 @@ export interface RaceDTO {
   slug: string;
 }
 
-// ============================================================
-// Faction
-// ============================================================
-
-export interface FactionSummaryDTO {
+export interface RaceSummaryDTO {
   id: number;
-  raceId: number;
   name: string;
   slug: string;
-  banner: string | null;
+}
+
+export interface LoreOfMagicDTO {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface LoreOfMagicSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface AbilityDTO {
+  id: number;
+  name: string;
+  slug: string;
+  type: AbilityType;
+}
+
+export interface AbilitySummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  type: AbilityType;
+}
+
+export interface SpellDTO {
+  id: number;
+  name: string;
+  slug: string;
+  type: AbilityType;
+  loreId: number;
+}
+
+export interface SpellSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  type: AbilityType;
+  loreId: number;
+}
+
+export interface ItemDTO {
+  id: number;
+  name: string;
+  slug: string;
+  category: ItemCategory;
+  rarity: ItemRarity;
+}
+
+export interface ItemSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  category: ItemCategory;
+  rarity: ItemRarity;
+}
+
+export interface ImbuementDTO {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface UnitAttributeDTO {
+  id: number;
+  name: string;
 }
 
 export interface FactionDTO {
   id: number;
-  raceId: number;
   name: string;
   slug: string;
+  raceId: number;
+}
+
+export interface FactionSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  raceId: number;
+}
+
+export interface BuildingChainDTO {
+  id: number;
+  name: string;
+  slug: string;
+  raceId: number;
+  category: BuildingCategory;
+}
+
+export interface BuildingChainSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  raceId: number;
+  category: BuildingCategory;
+}
+
+export interface BuildingDTO {
+  id: number;
+  name: string;
+  slug: string;
+  raceId: number;
+  buildingChainId: number | null;
+  category: BuildingCategory;
+}
+
+export interface BuildingSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  raceId: number;
+  buildingChainId: number | null;
+  category: BuildingCategory;
+}
+
+export interface UnitDTO {
+  categoryType: any;
+  picture: string | Blob | undefined;
+  id: number;
+  name: string;
+  slug: string;
+  raceIds: number[];
+}
+
+export interface UnitSummaryDTO {
+  id: number;
+  name: string;
+  slug: string;
+  raceIds: number[];
+}
+
+// ============================================================
+// Variant DTOs
+// ============================================================
+
+export interface ImbuementVariantDTO {
+  id: number;
+  imbuementId: number;
+  name: string;
+  slug: string;
+  gameVersionId: number;
+  description: string | null;
+  icon: string | null;
+}
+
+export interface UnitAttributeVariantDTO {
+  id: number | null;
+  unitAttributeId: number;
+  name: string;
+  gameVersionId: number;
+  description: string | null;
+}
+
+export interface UnitVariantAttributeLineDTO {
+  id: number;
+  position: number;
+  content: string;
+}
+
+export interface RangedWeaponDTO {
+  id: number;
+  weaponSlot: string;
+  imbuementVariantId: number | null;
+  ammunition: number | null;
+  range: number | null;
+  missileBaseDamage: number | null;
+  missileApDamage: number | null;
+  missileBonusVsLarge: number | null;
+  missileBonusVsInfantry: number | null;
+  explosionDamage: number | null;
+  explosionApDamage: number | null;
+  detonationRadius: number | null;
+  shotsPerVolley: number | null;
+  projectileNumber: number | null;
+  projectileCategory: string | null;
+  reloadTime: number | null;
+  totalAccuracy: number | null;
+  calibrationDistance: number | null;
+  calibrationArea: number | null;
+  penetrationSizeCap: string | null;
+  maxPenetration: number | null;
+}
+
+export interface FactionVariantDTO {
+  id: number;
+  factionId: number;
+  gameVersionId: number;
   banner: string | null;
   leader: string | null;
   factionEffect: string | null;
@@ -132,39 +298,14 @@ export interface FactionDTO {
   climateOcean: ClimateStatus;
 }
 
-// ============================================================
-// Lore of Magic
-// ============================================================
-
-export interface LoreOfMagicSummaryDTO {
+export interface AbilityVariantDTO {
   id: number;
+  abilityId: number;
   name: string;
   slug: string;
-}
-
-export interface LoreOfMagicDTO {
-  id: number;
-  name: string;
-  slug: string;
+  type: AbilityType;
+  gameVersionId: number;
   description: string | null;
-}
-
-// ============================================================
-// Ability
-// ============================================================
-
-export interface AbilitySummaryDTO {
-  id: number;
-  name: string;
-  slug: string;
-  type: AbilityType;
-}
-
-export interface AbilityDTO {
-  id: number;
-  name: string;
-  slug: string;
-  type: AbilityType;
   effect: string | null;
   target: string | null;
   range: number | null;
@@ -180,24 +321,24 @@ export interface AbilityDTO {
   movementSpeed: number | null;
 }
 
-// ============================================================
-// Spell
-// ============================================================
-
-export interface SpellSummaryDTO {
+export interface AbilityVariantSummaryDTO {
   id: number;
-  loreId: number;
+  abilityId: number;
   name: string;
   slug: string;
   type: AbilityType;
+  gameVersionId: number;
 }
 
-export interface SpellDTO {
+export interface SpellVariantDTO {
   id: number;
-  loreId: number;
+  spellId: number;
   name: string;
   slug: string;
   type: AbilityType;
+  loreId: number;
+  gameVersionId: number;
+  description: string | null;
   effect: string | null;
   target: string | null;
   range: number | null;
@@ -228,144 +369,103 @@ export interface SpellDTO {
   overcastMiscastChance: number | null;
 }
 
-// ============================================================
-// Item
-// ============================================================
-
-export interface ItemSummaryDTO {
+export interface SpellVariantSummaryDTO {
   id: number;
+  spellId: number;
   name: string;
   slug: string;
-  category: ItemCategory;
-  rarity: ItemRarity;
-  raceId: number | null;
+  type: AbilityType;
+  loreId: number;
+  gameVersionId: number;
 }
 
-export interface ItemDTO {
+export interface ItemVariantDTO {
   id: number;
+  itemId: number;
   name: string;
   slug: string;
-  picture: string | null;
   category: ItemCategory;
   rarity: ItemRarity;
+  gameVersionId: number;
+  picture: string | null;
   effect: string | null;
   raceId: number | null;
-  abilityIds: number[];
-  spellIds: number[];
+  abilityVariantIds: number[];
+  spellVariantIds: number[];
 }
 
-// ============================================================
-// Building
-// ============================================================
-
-export interface BuildingChainSummaryDTO {
+export interface ItemVariantSummaryDTO {
   id: number;
-  raceId: number;
+  itemId: number;
+  name: string;
+  slug: string;
+  category: ItemCategory;
+  rarity: ItemRarity;
+  gameVersionId: number;
+  raceId: number | null;
+}
+
+export interface BuildingVariantDTO {
+  id: number;
+  buildingId: number;
   name: string;
   slug: string;
   category: BuildingCategory;
-}
-
-export interface BuildingChainDTO {
-  id: number;
-  raceId: number;
-  name: string;
-  slug: string;
-  category: BuildingCategory;
-  description: string | null;
-}
-
-export interface BuildingSummaryDTO {
-  id: number;
   raceId: number;
   buildingChainId: number | null;
-  name: string;
-  slug: string;
-  tier: number | null;
-  category: BuildingCategory;
-}
-
-export interface BuildingDTO {
-  id: number;
-  raceId: number;
-  buildingChainId: number | null;
-  name: string;
-  slug: string;
+  gameVersionId: number;
   picture: string | null;
   tier: number | null;
-  category: BuildingCategory;
   effect: string | null;
   cost: number | null;
   requirements: string | null;
 }
 
-// ============================================================
-// Unit
-// ============================================================
-
-export interface RangedWeaponDTO {
+export interface BuildingVariantSummaryDTO {
   id: number;
-  weaponSlot: string;
-  imbuementId: number | null;
-  ammunition: number | null;
-  range: number | null;
-  missileBaseDamage: number | null;
-  missileApDamage: number | null;
-  missileBonusVsLarge: number | null;
-  missileBonusVsInfantry: number | null;
-  explosionDamage: number | null;
-  explosionApDamage: number | null;
-  detonationRadius: number | null;
-  shotsPerVolley: number | null;
-  projectileNumber: number | null;
-  projectileCategory: string | null;
-  reloadTime: number | null;
-  totalAccuracy: number | null;
-  calibrationDistance: number | null;
-  calibrationArea: number | null;
-  penetrationSizeCap: string | null;
-  maxPenetration: number | null;
-}
-
-export interface UnitAttributeLineDTO {
-  id: number;
-  position: number;
-  content: string;
-}
-
-export interface UnitSummaryDTO {
-  id: number;
-  raceId: number;
+  buildingId: number;
   name: string;
   slug: string;
+  category: BuildingCategory;
+  raceId: number;
+  buildingChainId: number | null;
+  gameVersionId: number;
+  tier: number | null;
+}
+
+export interface UnitVariantSummaryDTO {
+  id: number;
+  unitId: number;
+  name: string;
+  slug: string;
+  gameVersionId: number;
   picture: string | null;
   tier: number;
   category: string | null;
-  role: UnitRole;
   categoryType: UnitCategoryType;
+  role: UnitRole;
 }
 
-export interface UnitDTO {
+export interface UnitVariantDTO {
   id: number;
-  raceId: number;
+  unitId: number;
   name: string;
   slug: string;
+  gameVersionId: number;
+  displayName: string | null;
+  raceIds: number[];
   picture: string | null;
   tier: number;
   category: string | null;
-  role: UnitRole;
   categoryType: UnitCategoryType;
+  role: UnitRole;
   description: string | null;
-
-  // Overview
   size: string;
   entities: number | null;
   mass: number | null;
   campaignCost: number | null;
   baseUpkeep: number | null;
   multiplayerCost: number | null;
-
-  // Survivability
   health: number | null;
   healthPerEntity: number | null;
   barrier: number | null;
@@ -377,14 +477,10 @@ export interface UnitDTO {
   spellResistance: number | null;
   fireResistance: number | null;
   leadership: number | null;
-
-  // Mobility
   speed: number | null;
   chargeSpeed: number | null;
-
-  // Melee
   meleeAttack: number | null;
-  meleeImbuement: ImbuementDTO | null;
+  meleeImbuement: ImbuementVariantDTO | null;
   attackInterval: number | null;
   highThreat: boolean | null;
   splashTargetSize: string | null;
@@ -396,20 +492,22 @@ export interface UnitDTO {
   meleeBonusVsLarge: number | null;
   meleeBonusVsInfantry: number | null;
   chargeBonus: number | null;
-
-  // Ranged
   rangedMode: RangedMode;
   rangedWeapons: RangedWeaponDTO[];
-
-  // Buildings
+  unlockBuildingVariantId: number | null;
+  allowBuildingVariantId: number | null;
+  attributeLines: UnitVariantAttributeLineDTO[];
+  unitAttributes: UnitAttributeVariantDTO[];
+  abilities: AbilityVariantSummaryDTO[];
+  passiveAbilities: AbilityVariantSummaryDTO[];
+  spells: SpellVariantSummaryDTO[];
+  items: ItemVariantSummaryDTO[];
+  abilityVariantIds: number[];
+  passiveAbilityVariantIds: number[];
+  spellVariantIds: number[];
+  itemVariantIds: number[];
+  unitAttributeIds: number[];
+  meleeImbuementVariantId: number | null;
   unlockBuildingId: number | null;
   allowBuildingId: number | null;
-
-  // Relations
-  attributeLines: UnitAttributeLineDTO[];
-  unitAttributes: UnitAttributeDTO[];
-  abilities: AbilitySummaryDTO[];
-  passiveAbilities: AbilitySummaryDTO[];
-  spells: SpellSummaryDTO[];
-  items: ItemSummaryDTO[];
 }

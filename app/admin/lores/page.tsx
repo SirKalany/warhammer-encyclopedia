@@ -2,61 +2,53 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { AbilitySummaryDTO } from "@/lib/types";
+import { LoreOfMagicSummaryDTO } from "@/lib/types";
 import AdminTable from "@/components/admin/AdminTable";
 import DeleteModal from "@/components/admin/DeleteModal";
-import Badge from "@/components/common/Badge";
 import Link from "next/link";
 
-export default function AdminAbilitiesPage() {
-  const [items, setItems] = useState<AbilitySummaryDTO[]>([]);
-  const [deleteTarget, setDeleteTarget] = useState<AbilitySummaryDTO | null>(
-    null,
-  );
+export default function AdminLoresPage() {
+  const [lores, setLores] = useState<LoreOfMagicSummaryDTO[]>([]);
+  const [deleteTarget, setDeleteTarget] =
+    useState<LoreOfMagicSummaryDTO | null>(null);
 
   useEffect(() => {
-    api.abilities.findAll().then(setItems);
+    api.lores.findAll().then(setLores);
   }, []);
 
   const handleDelete = async (id: number) => {
-    await api.abilities.delete(id);
-    setItems((prev) => prev.filter((i) => i.id !== id));
+    await api.lores.delete(id);
+    setLores((prev) => prev.filter((l) => l.id !== id));
     setDeleteTarget(null);
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl">Abilities</h1>
+        <h1 className="text-2xl">Lores of Magic</h1>
         <Link
-          href="/admin/abilities/new"
+          href="/admin/lores/new"
           className="font-display text-xs tracking-widest uppercase px-4 py-2 bg-gold-subtle border border-gold-bright text-gold-bright rounded-sm hover:bg-gold-dim hover:text-text-primary transition-all duration-150 no-underline"
         >
-          + Add Ability
+          + Add Lore
         </Link>
       </div>
       <AdminTable
-        items={items}
+        items={lores}
         columns={[
-          { label: "Name", render: (i) => i.name },
-          {
-            label: "Type",
-            render: (i) => (
-              <Badge label={i.type.replace(/_/g, " ")} variant="default" />
-            ),
-          },
+          { label: "Name", render: (l) => l.name },
           {
             label: "Slug",
-            render: (i) => (
+            render: (l) => (
               <span className="text-text-muted font-mono text-xs">
-                {i.slug}
+                {l.slug}
               </span>
             ),
           },
         ]}
-        editPath={(i) => `/admin/abilities/${i.id}/edit`}
+        editPath={(l) => `/admin/lores/${l.id}/edit`}
         onDelete={(id) =>
-          setDeleteTarget(items.find((i) => i.id === id) ?? null)
+          setDeleteTarget(lores.find((l) => l.id === id) ?? null)
         }
       />
       {deleteTarget && (

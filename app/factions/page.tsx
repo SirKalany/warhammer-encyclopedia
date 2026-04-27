@@ -1,9 +1,18 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { RaceSummaryDTO } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
+import Link from "next/link";
 
-export default async function FactionsPage() {
-  const races = await api.races.findAll();
+export default function FactionsPage() {
+  const { versionId } = useVersion();
+  const [races, setRaces] = useState<RaceSummaryDTO[]>([]);
+
+  useEffect(() => {
+    api.raceVariants.findByVersion(versionId).then(setRaces);
+  }, [versionId]);
 
   return (
     <div className="space-y-8">
@@ -13,7 +22,6 @@ export default async function FactionsPage() {
           Select a race to browse its playable factions.
         </p>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {races.map((race) => (
           <Link

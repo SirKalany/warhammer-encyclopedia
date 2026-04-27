@@ -1,4 +1,4 @@
-import { UnitDTO } from "@/lib/types";
+import { UnitVariantDTO } from "@/lib/types";
 import UnitStatBlock from "./UnitStatBlock";
 import Badge from "@/components/common/Badge";
 import AbilityCard from "@/components/abilities/AbilityCard";
@@ -24,7 +24,7 @@ const TIER_LABEL: Record<number, string> = {
 };
 
 interface UnitDetailProps {
-  unit: UnitDTO;
+  unit: UnitVariantDTO;
 }
 
 export default function UnitDetail({ unit }: UnitDetailProps) {
