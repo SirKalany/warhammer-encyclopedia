@@ -32,10 +32,9 @@ export default function UnitDetail({ unit }: UnitDetailProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex gap-6 items-start">
-        {/* Picture */}
         <div
           className="
-                    w-32 h-32 shrink-0 rounded-md overflow-hidden
+                    w-32 h-32 flex-shrink-0 rounded-md overflow-hidden
                     bg-bg-overlay border border-border-gold
                     flex items-center justify-center
                 "
@@ -51,7 +50,6 @@ export default function UnitDetail({ unit }: UnitDetailProps) {
           )}
         </div>
 
-        {/* Title block */}
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <Badge
@@ -64,16 +62,12 @@ export default function UnitDetail({ unit }: UnitDetailProps) {
             />
             <Badge label={unit.role.replace(/_/g, " ")} variant="default" />
           </div>
-
           <h1 className="text-3xl mb-1">{unit.name}</h1>
-
           {unit.category && (
             <p className="text-text-secondary font-body text-lg italic">
               {unit.category}
             </p>
           )}
-
-          {/* Attribute lines */}
           {unit.attributeLines.length > 0 && (
             <div className="mt-3 space-y-1">
               {unit.attributeLines.map((line) => (
@@ -98,36 +92,44 @@ export default function UnitDetail({ unit }: UnitDetailProps) {
         </div>
       )}
 
-      {/* Unit Attributes (Flying, Daemonic etc.) */}
+      {/* Unit Attributes */}
       {unit.unitAttributes.length > 0 && (
         <div>
           <h2 className="text-base mb-3">Unit Attributes</h2>
           <div className="flex flex-wrap gap-2">
             {unit.unitAttributes.map((attr) => (
-              <Badge key={attr.id} label={attr.name} variant="default" />
+              <Badge
+                key={attr.unitAttributeId}
+                label={attr.name}
+                variant="default"
+              />
             ))}
           </div>
         </div>
       )}
 
       {/* Building requirements */}
-      {(unit.unlockBuildingId || unit.allowBuildingId) && (
+      {(unit.unlockBuildingVariantId || unit.allowBuildingVariantId) && (
         <div
           className="
                     bg-bg-surface border border-border-subtle rounded-md px-5 py-3
                     flex flex-wrap gap-4 text-sm
                 "
         >
-          {unit.unlockBuildingId && (
+          {unit.unlockBuildingVariantId && (
             <span className="text-text-secondary">
               Unlocked by building{" "}
-              <span className="text-gold-bright">#{unit.unlockBuildingId}</span>
+              <span className="text-gold-bright">
+                #{unit.unlockBuildingVariantId}
+              </span>
             </span>
           )}
-          {unit.allowBuildingId && (
+          {unit.allowBuildingVariantId && (
             <span className="text-text-secondary">
               Allowed by building{" "}
-              <span className="text-gold-bright">#{unit.allowBuildingId}</span>
+              <span className="text-gold-bright">
+                #{unit.allowBuildingVariantId}
+              </span>
             </span>
           )}
         </div>

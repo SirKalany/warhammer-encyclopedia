@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { SpellDTO } from "@/lib/types";
+import { SpellVariantDTO } from "@/lib/types";
 
 interface OvercastToggleProps {
-  spell: SpellDTO;
+  spell: SpellVariantDTO;
 }
 
 interface StatRowProps {
@@ -19,17 +19,12 @@ function StatRow({ label, base, overcast, isOvercast }: StatRowProps) {
     isOvercast && overcast !== null && overcast !== undefined ? overcast : base;
   const changed =
     overcast !== null && overcast !== undefined && overcast !== base;
-
   if (value === null || value === undefined) return null;
-
   return (
     <div className="flex justify-between items-center py-1.5 border-b border-border-subtle last:border-0">
       <span className="text-sm text-text-secondary">{label}</span>
       <span
-        className={`
-                font-display text-sm font-semibold tracking-wide
-                ${isOvercast && changed ? "text-gold-bright" : "text-text-primary"}
-            `}
+        className={`font-display text-sm font-semibold tracking-wide ${isOvercast && changed ? "text-gold-bright" : "text-text-primary"}`}
       >
         {value}
         {isOvercast && changed && (
@@ -49,53 +44,29 @@ export default function OvercastToggle({ spell }: OvercastToggleProps) {
 
   return (
     <div className="space-y-4">
-      {/* Toggle */}
       {hasOvercast && (
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsOvercast(false)}
-            className={`
-                            font-display text-xs font-semibold tracking-widest uppercase
-                            px-4 py-1.5 rounded-sm border transition-all duration-150
-                            ${
-                              !isOvercast
-                                ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                            }
-                        `}
+            className={`font-display text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-sm border transition-all duration-150 ${!isOvercast ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
           >
             Base
           </button>
           <button
             onClick={() => setIsOvercast(true)}
-            className={`
-                            font-display text-xs font-semibold tracking-widest uppercase
-                            px-4 py-1.5 rounded-sm border transition-all duration-150
-                            ${
-                              isOvercast
-                                ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                            }
-                        `}
+            className={`font-display text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-sm border transition-all duration-150 ${isOvercast ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
           >
             Overcast
           </button>
         </div>
       )}
 
-      {/* Effect text */}
       {(isOvercast ? (spell.overcastEffect ?? spell.effect) : spell.effect) && (
-        <div
-          className="
-                    bg-bg-surface border border-border-subtle rounded-md
-                    px-5 py-4 italic text-text-secondary font-body leading-relaxed
-                "
-        >
+        <div className="bg-bg-surface border border-border-subtle rounded-md px-5 py-4 italic text-text-secondary font-body leading-relaxed">
           {isOvercast ? (spell.overcastEffect ?? spell.effect) : spell.effect}
         </div>
       )}
 
-      {/* Stats */}
       <div className="bg-bg-surface border border-border-subtle rounded-md overflow-hidden">
         <div className="bg-bg-overlay px-4 py-2 border-b border-border-gold">
           <h3 className="font-display text-xs font-bold tracking-widest uppercase text-gold-bright">

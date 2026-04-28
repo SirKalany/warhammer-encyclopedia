@@ -1,8 +1,18 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { RaceSummaryDTO } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
 import Link from "next/link";
 
-export default async function BuildingsPage() {
-  const races = await api.races.findAll();
+export default function BuildingsPage() {
+  const { versionId } = useVersion();
+  const [races, setRaces] = useState<RaceSummaryDTO[]>([]);
+
+  useEffect(() => {
+    api.raceVariants.findByVersion(versionId).then(setRaces);
+  }, [versionId]);
 
   return (
     <div className="space-y-8">
@@ -12,7 +22,6 @@ export default async function BuildingsPage() {
           Select a race to browse its buildings and chains.
         </p>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {races.map((race) => (
           <Link

@@ -1,4 +1,4 @@
-import { UnitDTO } from "@/lib/types";
+import { UnitVariantDTO } from "@/lib/types";
 
 interface StatRowProps {
   label: string;
@@ -63,7 +63,7 @@ function pct(value: number | null | undefined) {
 }
 
 interface UnitStatBlockProps {
-  unit: UnitDTO;
+  unit: UnitVariantDTO;
 }
 
 export default function UnitStatBlock({ unit }: UnitStatBlockProps) {
@@ -246,8 +246,11 @@ export default function UnitStatBlock({ unit }: UnitStatBlockProps) {
               value={weapon.maxPenetration}
               indent
             />
-            {weapon.imbuementId && (
-              <StatRow label="Imbuement" value={`#${weapon.imbuementId}`} />
+            {weapon.imbuementVariantId && (
+              <StatRow
+                label="Imbuement"
+                value={`#${weapon.imbuementVariantId}`}
+              />
             )}
           </StatSection>
         ))}

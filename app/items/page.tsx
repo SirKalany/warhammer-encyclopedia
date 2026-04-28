@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { ItemSummaryDTO, ItemCategory } from "@/lib/types";
+import { ItemVariantSummaryDTO, ItemCategory } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
 import ItemCard from "@/components/items/ItemCard";
 import SearchBar from "@/components/common/SearchBar";
 
@@ -23,7 +24,8 @@ const CATEGORY_LABEL: Record<ItemCategory, string> = {
 };
 
 export default function ItemsPage() {
-  const [items, setItems] = useState<ItemSummaryDTO[]>([]);
+  const { versionId } = useVersion();
+  const [items, setItems] = useState<ItemVariantSummaryDTO[]>([]);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ItemCategory | null>(
     null,
@@ -31,11 +33,11 @@ export default function ItemsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.items.findAll().then((data) => {
+    api.itemVariants.findByVersion(versionId).then((data) => {
       setItems(data);
       setLoading(false);
     });
-  }, []);
+  }, [versionId]);
 
   const filtered = items.filter((i) => {
     const matchSearch = i.name.toLowerCase().includes(search.toLowerCase());
@@ -54,7 +56,6 @@ export default function ItemsPage() {
         </p>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <SearchBar placeholder="Search items..." onSearch={setSearch} />
@@ -62,15 +63,7 @@ export default function ItemsPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`
-                            font-display text-[0.65rem] tracking-widest uppercase
-                            px-3 py-1.5 rounded-sm border transition-all duration-150
-                            ${
-                              selectedCategory === null
-                                ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                            }
-                        `}
+            className={`font-display text-[0.65rem] tracking-widest uppercase px-3 py-1.5 rounded-sm border transition-all duration-150 ${selectedCategory === null ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
           >
             All
           </button>
@@ -80,15 +73,7 @@ export default function ItemsPage() {
               onClick={() =>
                 setSelectedCategory(cat === selectedCategory ? null : cat)
               }
-              className={`
-                                font-display text-[0.65rem] tracking-widest uppercase
-                                px-3 py-1.5 rounded-sm border transition-all duration-150
-                                ${
-                                  selectedCategory === cat
-                                    ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                    : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                                }
-                            `}
+              className={`font-display text-[0.65rem] tracking-widest uppercase px-3 py-1.5 rounded-sm border transition-all duration-150 ${selectedCategory === cat ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
             >
               {CATEGORY_LABEL[cat]}
             </button>
@@ -96,7 +81,6 @@ export default function ItemsPage() {
         </div>
       </div>
 
-      {/* List */}
       {loading ? (
         <p className="text-text-muted italic">Loading items...</p>
       ) : filtered.length === 0 ? (

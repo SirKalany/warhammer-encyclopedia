@@ -1,5 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
-import { notFound } from "next/navigation";
+import { SpellVariantDTO, LoreOfMagicDTO } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
 import OvercastToggle from "@/components/spells/OvercastToggle";
 import Badge from "@/components/common/Badge";
 import Link from "next/link";
@@ -22,21 +27,40 @@ const TYPE_VARIANT: Record<
   SUMMON: "gold",
 };
 
-interface Props {
-  params: { loreSlug: string; spellSlug: string };
-}
+export default function SpellDetailPage() {
+  const { loreSlug, spellSlug } = useParams<{
+    loreSlug: string;
+    spellSlug: string;
+  }>();
+  const { versionId } = useVersion();
+  const [lore, setLore] = useState<LoreOfMagicDTO | null>(null);
+  const [spell, setSpell] = useState<SpellVariantDTO | null>(null);
 
-export default async function SpellDetailPage({ params }: Props) {
-  const lores = await api.lores.findAll();
-  const lore = lores.find((l) => l.slug === params.loreSlug);
-  if (!lore) notFound();
+  useEffect(() => {
+    async function load() {
+      const loreData = await api.lores.findBySlug(loreSlug);
+      setLore(loreData);
+      const spells = await api.spells.findAll(loreData.id);
+      const found = spells.find((s) => s.slug === spellSlug);
+      if (!found) return;
+      const variant = await api.spellVariants.findBySpellAndVersion(
+        found.id,
+        versionId,
+      );
+      setSpell(variant);
+    }
+    load();
+  }, [loreSlug, spellSlug, versionId]);
 
-  const spell = await api.spells.findBySlug(params.spellSlug).catch(() => null);
-  if (!spell) notFound();
+  if (!spell)
+    return (
+      <p className="text-text-muted italic">
+        Spell not found for this version.
+      </p>
+    );
 
   return (
     <div className="space-y-6 max-w-2xl">
-      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-text-muted">
         <Link
           href="/spells"
@@ -46,16 +70,15 @@ export default async function SpellDetailPage({ params }: Props) {
         </Link>
         <span>›</span>
         <Link
-          href={`/spells/${params.loreSlug}`}
+          href={`/spells/${loreSlug}`}
           className="hover:text-gold-bright transition-colors duration-150"
         >
-          {lore.name}
+          {lore?.name}
         </Link>
         <span>›</span>
         <span className="text-text-primary">{spell.name}</span>
       </div>
 
-      {/* Header */}
       <div className="space-y-2">
         <Badge
           label={spell.type.replace(/_/g, " ")}
@@ -64,10 +87,8 @@ export default async function SpellDetailPage({ params }: Props) {
         <h1 className="text-3xl">{spell.name}</h1>
       </div>
 
-      {/* Overcast toggle + stats */}
       <OvercastToggle spell={spell} />
 
-      {/* Conditions */}
       {spell.conditions && (
         <div className="bg-bg-surface border border-border-subtle rounded-md px-4 py-3 text-sm text-text-secondary">
           <span className="text-text-muted font-display text-xs tracking-widest uppercase mr-2">

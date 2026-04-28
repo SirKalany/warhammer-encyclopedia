@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ItemSummaryDTO } from "@/lib/types";
+import { ItemVariantSummaryDTO } from "@/lib/types";
 import Badge from "@/components/common/Badge";
 
 interface ItemCardProps {
-  item: ItemSummaryDTO;
+  item: ItemVariantSummaryDTO;
 }
 
 const RARITY_VARIANT: Record<
@@ -37,7 +37,6 @@ export default function ItemCard({ item }: ItemCardProps) {
                 transition-all duration-150
             "
     >
-      {/* Left accent */}
       <div
         className="
                 absolute left-0 top-0 bottom-0 w-0.5 rounded-l-md
@@ -45,8 +44,6 @@ export default function ItemCard({ item }: ItemCardProps) {
                 transition-opacity duration-150
             "
       />
-
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <Badge
@@ -58,7 +55,6 @@ export default function ItemCard({ item }: ItemCardProps) {
             variant="default"
           />
         </div>
-
         <p
           className="
                     font-display text-sm font-semibold tracking-wide
@@ -69,10 +65,8 @@ export default function ItemCard({ item }: ItemCardProps) {
           {item.name}
         </p>
       </div>
-
-      {/* Race restriction */}
       {item.raceId && (
-        <div className="shrink-0">
+        <div className="flex-shrink-0">
           <Badge label="Race Restricted" variant="warn" />
         </div>
       )}

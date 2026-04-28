@@ -1,5 +1,10 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
-import { notFound } from "next/navigation";
+import { AbilityVariantDTO } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
 import Badge from "@/components/common/Badge";
 import Link from "next/link";
 
@@ -21,10 +26,6 @@ const TYPE_VARIANT: Record<
   SUMMON: "gold",
 };
 
-interface Props {
-  params: { id: string };
-}
-
 function StatRow({
   label,
   value,
@@ -43,13 +44,27 @@ function StatRow({
   );
 }
 
-export default async function AbilityDetailPage({ params }: Props) {
-  const ability = await api.abilities.findBySlug(params.id).catch(() => null);
-  if (!ability) notFound();
+export default function AbilityDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const { versionId } = useVersion();
+  const [ability, setAbility] = useState<AbilityVariantDTO | null>(null);
+
+  useEffect(() => {
+    api.abilityVariants
+      .findByAbilityAndVersion(Number(id), versionId)
+      .then(setAbility)
+      .catch(() => setAbility(null));
+  }, [id, versionId]);
+
+  if (!ability)
+    return (
+      <p className="text-text-muted italic">
+        Ability not found for this version.
+      </p>
+    );
 
   return (
     <div className="space-y-6 max-w-2xl">
-      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-text-muted">
         <Link
           href="/abilities"
@@ -61,7 +76,6 @@ export default async function AbilityDetailPage({ params }: Props) {
         <span className="text-text-primary">{ability.name}</span>
       </div>
 
-      {/* Header */}
       <div className="space-y-2">
         <Badge
           label={ability.type.replace(/_/g, " ")}
@@ -70,19 +84,12 @@ export default async function AbilityDetailPage({ params }: Props) {
         <h1 className="text-3xl">{ability.name}</h1>
       </div>
 
-      {/* Effect */}
       {ability.effect && (
-        <div
-          className="
-                    bg-bg-surface border border-border-subtle rounded-md
-                    px-5 py-4 italic text-text-secondary font-body leading-relaxed
-                "
-        >
+        <div className="bg-bg-surface border border-border-subtle rounded-md px-5 py-4 italic text-text-secondary font-body leading-relaxed">
           {ability.effect}
         </div>
       )}
 
-      {/* Stats */}
       <div className="bg-bg-surface border border-border-subtle rounded-md overflow-hidden">
         <div className="bg-bg-overlay px-4 py-2 border-b border-border-gold">
           <h3 className="font-display text-xs font-bold tracking-widest uppercase text-gold-bright">

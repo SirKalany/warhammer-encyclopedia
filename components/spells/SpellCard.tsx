@@ -1,9 +1,9 @@
-import { SpellSummaryDTO } from "@/lib/types";
+import { SpellVariantSummaryDTO } from "@/lib/types";
 import Badge from "@/components/common/Badge";
 import Link from "next/link";
 
 interface SpellCardProps {
-  spell: SpellSummaryDTO;
+  spell: SpellVariantSummaryDTO;
 }
 
 const TYPE_VARIANT: Record<
@@ -27,7 +27,7 @@ const TYPE_VARIANT: Record<
 export default function SpellCard({ spell }: SpellCardProps) {
   return (
     <Link
-      href={`/spells/${spell.slug}`}
+      href={`/spells/${spell.loreId}/${spell.slug}`}
       className="
                 flex items-center justify-between gap-3
                 bg-bg-surface border border-border-subtle rounded-md

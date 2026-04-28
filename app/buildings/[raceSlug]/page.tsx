@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
 import {
-  BuildingSummaryDTO,
-  BuildingChainSummaryDTO,
+  BuildingVariantSummaryDTO,
   BuildingCategory,
+  RaceSummaryDTO,
 } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
 import SearchBar from "@/components/common/SearchBar";
@@ -44,10 +45,9 @@ const TIER_LABEL: Record<number, string> = {
 
 export default function BuildingsByRacePage() {
   const { raceSlug } = useParams<{ raceSlug: string }>();
-  const [raceName, setRaceName] = useState("");
-  const [raceId, setRaceId] = useState<number | null>(null);
-  const [chains, setChains] = useState<BuildingChainSummaryDTO[]>([]);
-  const [standalones, setStandalones] = useState<BuildingSummaryDTO[]>([]);
+  const { versionId } = useVersion();
+  const [race, setRace] = useState<RaceSummaryDTO | null>(null);
+  const [buildings, setBuildings] = useState<BuildingVariantSummaryDTO[]>([]);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] =
     useState<BuildingCategory | null>(null);
@@ -55,34 +55,21 @@ export default function BuildingsByRacePage() {
 
   useEffect(() => {
     async function load() {
-      const races = await api.races.findAll();
-      const race = races.find((r) => r.slug === raceSlug);
-      if (!race) return;
-      setRaceName(race.name);
-      setRaceId(race.id);
-
-      const [allChains, allBuildings] = await Promise.all([
-        api.buildingChains.findByRace(race.id),
-        api.buildings.findByRace(race.id),
-      ]);
-
-      setChains(allChains);
-      // Standalone = buildings with no chain
-      setStandalones(allBuildings.filter((b) => b.buildingChainId === null));
+      const races = await api.raceVariants.findByVersion(versionId);
+      const found = races.find((r) => r.slug === raceSlug);
+      if (!found) return;
+      setRace(found);
+      const data = await api.buildingVariants.findByVersion(
+        versionId,
+        found.id,
+      );
+      setBuildings(data);
       setLoading(false);
     }
     load();
-  }, [raceSlug]);
+  }, [raceSlug, versionId]);
 
-  const filteredChains = chains.filter((c) => {
-    const matchSearch = c.name.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = selectedCategory
-      ? c.category === selectedCategory
-      : true;
-    return matchSearch && matchCategory;
-  });
-
-  const filteredStandalones = standalones.filter((b) => {
+  const filtered = buildings.filter((b) => {
     const matchSearch = b.name.toLowerCase().includes(search.toLowerCase());
     const matchCategory = selectedCategory
       ? b.category === selectedCategory
@@ -90,26 +77,38 @@ export default function BuildingsByRacePage() {
     return matchSearch && matchCategory;
   });
 
+  // Separate chains from standalones
+  // A building is standalone if buildingChainId is null
+  const chains = filtered.filter((b) => b.buildingChainId !== null);
+  const standalones = filtered.filter((b) => b.buildingChainId === null);
+
+  // Group by category
   const grouped = CATEGORIES.reduce(
     (acc, cat) => {
-      const catChains = filteredChains.filter((c) => c.category === cat);
-      const catStandalones = filteredStandalones.filter(
-        (b) => b.category === cat,
+      const catChains = chains.filter((b) => b.category === cat);
+      const catStandalones = standalones.filter((b) => b.category === cat);
+      // Deduplicate chains by buildingChainId
+      const uniqueChains = catChains.filter(
+        (b, index, self) =>
+          self.findIndex((c) => c.buildingChainId === b.buildingChainId) ===
+          index,
       );
-      if (catChains.length > 0 || catStandalones.length > 0) {
-        acc[cat] = { chains: catChains, standalones: catStandalones };
+      if (uniqueChains.length > 0 || catStandalones.length > 0) {
+        acc[cat] = { chains: uniqueChains, standalones: catStandalones };
       }
       return acc;
     },
     {} as Record<
       BuildingCategory,
-      { chains: BuildingChainSummaryDTO[]; standalones: BuildingSummaryDTO[] }
+      {
+        chains: BuildingVariantSummaryDTO[];
+        standalones: BuildingVariantSummaryDTO[];
+      }
     >,
   );
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-text-muted">
         <Link
           href="/buildings"
@@ -118,12 +117,11 @@ export default function BuildingsByRacePage() {
           Buildings
         </Link>
         <span>›</span>
-        <span className="text-text-primary">{raceName}</span>
+        <span className="text-text-primary">{race?.name}</span>
       </div>
 
-      <h1 className="text-3xl">{raceName} Buildings</h1>
+      <h1 className="text-3xl">{race?.name} Buildings</h1>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <SearchBar placeholder="Search buildings..." onSearch={setSearch} />
@@ -131,15 +129,7 @@ export default function BuildingsByRacePage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedCategory(null)}
-            className={`
-                            font-display text-[0.65rem] tracking-widest uppercase
-                            px-3 py-1.5 rounded-sm border transition-all duration-150
-                            ${
-                              selectedCategory === null
-                                ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                            }
-                        `}
+            className={`font-display text-[0.65rem] tracking-widest uppercase px-3 py-1.5 rounded-sm border transition-all duration-150 ${selectedCategory === null ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
           >
             All
           </button>
@@ -149,15 +139,7 @@ export default function BuildingsByRacePage() {
               onClick={() =>
                 setSelectedCategory(cat === selectedCategory ? null : cat)
               }
-              className={`
-                                font-display text-[0.65rem] tracking-widest uppercase
-                                px-3 py-1.5 rounded-sm border transition-all duration-150
-                                ${
-                                  selectedCategory === cat
-                                    ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                    : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                                }
-                            `}
+              className={`font-display text-[0.65rem] tracking-widest uppercase px-3 py-1.5 rounded-sm border transition-all duration-150 ${selectedCategory === cat ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
             >
               {CATEGORY_LABEL[cat]}
             </button>
@@ -165,7 +147,6 @@ export default function BuildingsByRacePage() {
         </div>
       </div>
 
-      {/* Content */}
       {loading ? (
         <p className="text-text-muted italic">Loading buildings...</p>
       ) : Object.keys(grouped).length === 0 ? (
@@ -179,11 +160,11 @@ export default function BuildingsByRacePage() {
                   {CATEGORY_LABEL[cat as BuildingCategory]}
                 </h2>
                 <div className="space-y-2">
-                  {/* Chains */}
-                  {catChains.map((chain) => (
+                  {/* Chains — link by buildingChainId */}
+                  {catChains.map((b) => (
                     <Link
-                      key={chain.id}
-                      href={`/buildings/${raceSlug}/${chain.slug}`}
+                      key={b.buildingChainId}
+                      href={`/buildings/${raceSlug}/chain-${b.buildingChainId}`}
                       className="
                                             group relative flex items-center gap-3
                                             bg-bg-surface border border-border-subtle rounded-md
@@ -200,25 +181,19 @@ export default function BuildingsByRacePage() {
                                         "
                       />
                       <div className="flex-1">
-                        <p
-                          className="
-                                                font-display text-sm font-semibold tracking-wide
-                                                text-text-primary group-hover:text-gold-bright
-                                                transition-colors duration-150
-                                            "
-                        >
-                          {chain.name}
+                        <p className="font-display text-sm font-semibold tracking-wide text-text-primary group-hover:text-gold-bright transition-colors duration-150">
+                          {b.name.split(" — ")[0]}
                         </p>
                       </div>
                       <Badge label="Chain" variant="gold" />
                     </Link>
                   ))}
 
-                  {/* Standalone buildings */}
-                  {catStandalones.map((building) => (
+                  {/* Standalones */}
+                  {catStandalones.map((b) => (
                     <Link
-                      key={building.id}
-                      href={`/buildings/${raceSlug}/${building.slug}`}
+                      key={b.id}
+                      href={`/buildings/${raceSlug}/${b.slug}`}
                       className="
                                             group relative flex items-center gap-3
                                             bg-bg-surface border border-border-subtle rounded-md
@@ -235,19 +210,13 @@ export default function BuildingsByRacePage() {
                                         "
                       />
                       <div className="flex-1">
-                        <p
-                          className="
-                                                font-display text-sm font-semibold tracking-wide
-                                                text-text-primary group-hover:text-gold-bright
-                                                transition-colors duration-150
-                                            "
-                        >
-                          {building.name}
+                        <p className="font-display text-sm font-semibold tracking-wide text-text-primary group-hover:text-gold-bright transition-colors duration-150">
+                          {b.name}
                         </p>
                       </div>
-                      {building.tier && (
+                      {b.tier && (
                         <span className="font-display text-xs text-text-muted tracking-widest uppercase">
-                          Tier {TIER_LABEL[building.tier] ?? building.tier}
+                          Tier {TIER_LABEL[b.tier] ?? b.tier}
                         </span>
                       )}
                     </Link>

@@ -1,9 +1,9 @@
-import { AbilitySummaryDTO } from "@/lib/types";
+import { AbilityVariantSummaryDTO } from "@/lib/types";
 import Badge from "@/components/common/Badge";
 import Link from "next/link";
 
 interface AbilityCardProps {
-  ability: AbilitySummaryDTO;
+  ability: AbilityVariantSummaryDTO;
 }
 
 const TYPE_VARIANT: Record<

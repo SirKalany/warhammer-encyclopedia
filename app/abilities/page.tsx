@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { AbilitySummaryDTO, AbilityType } from "@/lib/types";
+import { AbilityVariantSummaryDTO, AbilityType } from "@/lib/types";
+import { useVersion } from "@/lib/VersionContext";
 import AbilityCard from "@/components/abilities/AbilityCard";
 import SearchBar from "@/components/common/SearchBar";
 
@@ -22,17 +23,18 @@ const TYPES: AbilityType[] = [
 ];
 
 export default function AbilitiesPage() {
-  const [abilities, setAbilities] = useState<AbilitySummaryDTO[]>([]);
+  const { versionId } = useVersion();
+  const [abilities, setAbilities] = useState<AbilityVariantSummaryDTO[]>([]);
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<AbilityType | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.abilities.findAll().then((data) => {
+    api.abilityVariants.findByVersion(versionId).then((data) => {
       setAbilities(data);
       setLoading(false);
     });
-  }, []);
+  }, [versionId]);
 
   const filtered = abilities.filter((a) => {
     const matchSearch = a.name.toLowerCase().includes(search.toLowerCase());
@@ -49,7 +51,6 @@ export default function AbilitiesPage() {
         </p>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <SearchBar placeholder="Search abilities..." onSearch={setSearch} />
@@ -57,15 +58,7 @@ export default function AbilitiesPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedType(null)}
-            className={`
-                            font-display text-[0.65rem] tracking-widest uppercase
-                            px-3 py-1.5 rounded-sm border transition-all duration-150
-                            ${
-                              selectedType === null
-                                ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                            }
-                        `}
+            className={`font-display text-[0.65rem] tracking-widest uppercase px-3 py-1.5 rounded-sm border transition-all duration-150 ${selectedType === null ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
           >
             All
           </button>
@@ -75,15 +68,7 @@ export default function AbilitiesPage() {
               onClick={() =>
                 setSelectedType(type === selectedType ? null : type)
               }
-              className={`
-                                font-display text-[0.65rem] tracking-widest uppercase
-                                px-3 py-1.5 rounded-sm border transition-all duration-150
-                                ${
-                                  selectedType === type
-                                    ? "bg-gold-subtle border-gold-bright text-gold-bright"
-                                    : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"
-                                }
-                            `}
+              className={`font-display text-[0.65rem] tracking-widest uppercase px-3 py-1.5 rounded-sm border transition-all duration-150 ${selectedType === type ? "bg-gold-subtle border-gold-bright text-gold-bright" : "bg-bg-raised border-border-gold text-text-muted hover:text-gold-bright"}`}
             >
               {type.replace(/_/g, " ")}
             </button>
@@ -91,7 +76,6 @@ export default function AbilitiesPage() {
         </div>
       </div>
 
-      {/* List */}
       {loading ? (
         <p className="text-text-muted italic">Loading abilities...</p>
       ) : filtered.length === 0 ? (
