@@ -5,8 +5,8 @@ import { api } from "@/lib/api";
 import { AbilitySummaryDTO } from "@/lib/types";
 import AdminTable from "@/components/admin/AdminTable";
 import DeleteModal from "@/components/admin/DeleteModal";
+import AddButton from "@/components/admin/AddButton";
 import Badge from "@/components/common/Badge";
-import Link from "next/link";
 
 export default function AdminAbilitiesPage() {
   const [items, setItems] = useState<AbilitySummaryDTO[]>([]);
@@ -28,12 +28,7 @@ export default function AdminAbilitiesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl">Abilities</h1>
-        <Link
-          href="/admin/abilities/new"
-          className="font-display text-xs tracking-widest uppercase px-4 py-2 bg-gold-subtle border border-gold-bright text-gold-bright rounded-sm hover:bg-gold-dim hover:text-text-primary transition-all duration-150 no-underline"
-        >
-          + Add Ability
-        </Link>
+        <AddButton href="/admin/abilities/new" label="Add Ability" />
       </div>
       <AdminTable
         items={items}

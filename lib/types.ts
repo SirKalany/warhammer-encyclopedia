@@ -210,8 +210,6 @@ export interface BuildingSummaryDTO {
 }
 
 export interface UnitDTO {
-  categoryType: any;
-  picture: string | Blob | undefined;
   id: number;
   name: string;
   slug: string;

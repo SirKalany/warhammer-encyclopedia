@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { RaceDTO } from "@/lib/types";
 import AdminFormWrapper from "@/components/admin/AdminFormWrapper";
 import { AdminFormField, AdminInput } from "@/components/admin/AdminFormField";
 
@@ -19,17 +18,16 @@ export default function RaceForm({ id }: RaceFormProps) {
 
   useEffect(() => {
     if (isEdit) {
-      // Find by id — fetch all and filter since we don't have findById for races
       api.races.findAll().then((races) => {
-        const race = races.find((r) => r.id === id);
-        if (race) setForm({ name: race.name, slug: race.slug });
+        const r = races.find((r) => r.id === id);
+        if (r) setForm({ name: r.name, slug: r.slug });
       });
     }
   }, [id, isEdit]);
 
-  // Auto-generate slug from name
   const handleNameChange = (name: string) => {
     setForm((prev) => ({
+      ...prev,
       name,
       slug: isEdit
         ? prev.slug
@@ -44,11 +42,8 @@ export default function RaceForm({ id }: RaceFormProps) {
     e.preventDefault();
     setIsLoading(true);
     try {
-      if (isEdit) {
-        await api.races.update(id, form);
-      } else {
-        await api.races.create(form);
-      }
+      if (isEdit) await api.races.update(id, form);
+      else await api.races.create(form);
       router.push("/admin/races");
     } finally {
       setIsLoading(false);
@@ -70,17 +65,10 @@ export default function RaceForm({ id }: RaceFormProps) {
           required
         />
       </AdminFormField>
-
-      <AdminFormField
-        label="Slug"
-        required
-        hint="Auto-generated from name. Used in URLs."
-      >
+      <AdminFormField label="Slug" required hint="Auto-generated from name.">
         <AdminInput
           value={form.slug}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, slug: e.target.value }))
-          }
+          onChange={(e) => setForm((p) => ({ ...p, slug: e.target.value }))}
           placeholder="e.g. greenskins"
           required
         />

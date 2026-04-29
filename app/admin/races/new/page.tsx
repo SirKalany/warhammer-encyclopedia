@@ -1,90 +1,57 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { RaceDTO } from "@/lib/types";
-import AdminFormWrapper from "@/components/admin/AdminFormWrapper";
-import { AdminFormField, AdminInput } from "@/components/admin/AdminFormField";
+import { RaceSummaryDTO } from "@/lib/types";
+import AdminTable from "@/components/admin/AdminTable";
+import DeleteModal from "@/components/admin/DeleteModal";
+import AddButton from "@/components/admin/AddButton";
 
-interface RaceFormProps {
-  id?: number;
-}
-
-export default function RaceForm({ id }: RaceFormProps) {
-  const router = useRouter();
-  const isEdit = id !== undefined;
-  const [isLoading, setIsLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", slug: "" });
+export default function AdminRacesPage() {
+  const [items, setItems] = useState<RaceSummaryDTO[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<RaceSummaryDTO | null>(null);
 
   useEffect(() => {
-    if (isEdit) {
-      // Find by id — fetch all and filter since we don't have findById for races
-      api.races.findAll().then((races) => {
-        const race = races.find((r) => r.id === id);
-        if (race) setForm({ name: race.name, slug: race.slug });
-      });
-    }
-  }, [id, isEdit]);
+    api.races.findAll().then(setItems);
+  }, []);
 
-  // Auto-generate slug from name
-  const handleNameChange = (name: string) => {
-    setForm((prev) => ({
-      name,
-      slug: isEdit
-        ? prev.slug
-        : name
-            .toLowerCase()
-            .replace(/\s+/g, "-")
-            .replace(/[^a-z0-9-]/g, ""),
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      if (isEdit) {
-        await api.races.update(id, form);
-      } else {
-        await api.races.create(form);
-      }
-      router.push("/admin/races");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleDelete = async (id: number) => {
+    await api.races.delete(id);
+    setItems((prev) => prev.filter((i) => i.id !== id));
+    setDeleteTarget(null);
   };
 
   return (
-    <AdminFormWrapper
-      title={isEdit ? "Edit Race" : "New Race"}
-      backHref="/admin/races"
-      onSubmit={handleSubmit}
-      isLoading={isLoading}
-    >
-      <AdminFormField label="Name" required>
-        <AdminInput
-          value={form.name}
-          onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="e.g. Greenskins"
-          required
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl">Races</h1>
+        <AddButton href="/admin/races/new" label="Add Race" />
+      </div>
+      <AdminTable
+        items={items}
+        columns={[
+          { label: "Name", render: (i) => i.name },
+          {
+            label: "Slug",
+            render: (i) => (
+              <span className="text-text-muted font-mono text-xs">
+                {i.slug}
+              </span>
+            ),
+          },
+        ]}
+        editPath={(i) => `/admin/races/${i.id}/edit`}
+        onDelete={(id) =>
+          setDeleteTarget(items.find((i) => i.id === id) ?? null)
+        }
+      />
+      {deleteTarget && (
+        <DeleteModal
+          name={deleteTarget.name}
+          onConfirm={() => handleDelete(deleteTarget.id)}
+          onCancel={() => setDeleteTarget(null)}
         />
-      </AdminFormField>
-
-      <AdminFormField
-        label="Slug"
-        required
-        hint="Auto-generated from name. Used in URLs."
-      >
-        <AdminInput
-          value={form.slug}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, slug: e.target.value }))
-          }
-          placeholder="e.g. greenskins"
-          required
-        />
-      </AdminFormField>
-    </AdminFormWrapper>
+      )}
+    </div>
   );
 }

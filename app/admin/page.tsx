@@ -1,16 +1,24 @@
 import Link from "next/link";
 
 const SECTIONS = [
+  { href: "/admin/versions", label: "Game Versions", icon: "◈" },
   { href: "/admin/races", label: "Races", icon: "⚑" },
   { href: "/admin/factions", label: "Factions", icon: "⚔" },
+  { href: "/admin/faction-variants", label: "Faction Variants", icon: "⚔" },
   { href: "/admin/units", label: "Units", icon: "🗡" },
+  { href: "/admin/unit-variants", label: "Unit Variants", icon: "🗡" },
   { href: "/admin/buildings", label: "Buildings", icon: "🏰" },
   { href: "/admin/building-chains", label: "Building Chains", icon: "🔗" },
+  { href: "/admin/building-variants", label: "Building Variants", icon: "🏰" },
   { href: "/admin/abilities", label: "Abilities", icon: "✦" },
+  { href: "/admin/ability-variants", label: "Ability Variants", icon: "✦" },
   { href: "/admin/spells", label: "Spells", icon: "✧" },
+  { href: "/admin/spell-variants", label: "Spell Variants", icon: "✧" },
   { href: "/admin/lores", label: "Lores of Magic", icon: "📖" },
   { href: "/admin/items", label: "Items", icon: "◈" },
+  { href: "/admin/item-variants", label: "Item Variants", icon: "◈" },
   { href: "/admin/imbuements", label: "Imbuements", icon: "⚗" },
+  { href: "/admin/imbuement-variants", label: "Imbuement Variants", icon: "⚗" },
   { href: "/admin/unit-attributes", label: "Unit Attributes", icon: "📋" },
 ];
 
@@ -23,7 +31,6 @@ export default function AdminDashboard() {
         </p>
         <h1 className="text-3xl">Admin Dashboard</h1>
       </div>
-
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {SECTIONS.map((section) => (
           <Link
