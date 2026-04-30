@@ -24,6 +24,10 @@ import {
   AdminSelect,
   AdminCheckbox,
 } from "@/components/admin/AdminFormField";
+import RangedWeaponSubForm, {
+  RangedWeaponFormData,
+  emptyRangedWeapon,
+} from "./RangedWeaponSubForm";
 
 const ROLES: UnitRole[] = [
   "LORDS",
@@ -47,6 +51,13 @@ const CATEGORY_TYPES: UnitCategoryType[] = [
   "RENOWNED",
   "RAISED",
 ];
+
+const [primaryWeapon, setPrimaryWeapon] = useState<RangedWeaponFormData>(
+  emptyRangedWeapon("primary"),
+);
+const [secondaryWeapon, setSecondaryWeapon] = useState<RangedWeaponFormData>(
+  emptyRangedWeapon("secondary"),
+);
 
 interface UnitVariantFormProps {
   id?: number;
@@ -292,6 +303,32 @@ export default function UnitVariantForm({ id }: UnitVariantFormProps) {
           content: l.content,
         }));
 
+      const toRangedPayload = (w: RangedWeaponFormData) => ({
+        id: 0,
+        weaponSlot: w.weaponSlot,
+        imbuementVariantId: w.imbuementVariantId
+          ? Number(w.imbuementVariantId)
+          : null,
+        ammunition: num(w.ammunition),
+        range: num(w.range),
+        missileBaseDamage: num(w.missileBaseDamage),
+        missileApDamage: num(w.missileApDamage),
+        missileBonusVsLarge: num(w.missileBonusVsLarge),
+        missileBonusVsInfantry: num(w.missileBonusVsInfantry),
+        explosionDamage: num(w.explosionDamage),
+        explosionApDamage: num(w.explosionApDamage),
+        detonationRadius: num(w.detonationRadius),
+        shotsPerVolley: num(w.shotsPerVolley),
+        projectileNumber: num(w.projectileNumber),
+        projectileCategory: w.projectileCategory || null,
+        reloadTime: num(w.reloadTime),
+        totalAccuracy: num(w.totalAccuracy),
+        calibrationDistance: num(w.calibrationDistance),
+        calibrationArea: num(w.calibrationArea),
+        penetrationSizeCap: w.penetrationSizeCap || null,
+        maxPenetration: num(w.maxPenetration),
+      });
+
       const payload = {
         unitId: Number(form.unitId),
         name: unit?.name ?? "",
@@ -341,7 +378,15 @@ export default function UnitVariantForm({ id }: UnitVariantFormProps) {
         meleeBonusVsInfantry: num(form.meleeBonusVsInfantry),
         chargeBonus: num(form.chargeBonus),
         rangedMode: form.rangedMode,
-        rangedWeapons: [],
+        rangedWeapons:
+          form.rangedMode === "NONE"
+            ? []
+            : form.rangedMode === "SINGLE"
+              ? [toRangedPayload(primaryWeapon)]
+              : [
+                  toRangedPayload(primaryWeapon),
+                  toRangedPayload(secondaryWeapon),
+                ],
         unlockBuildingVariantId: form.unlockBuildingVariantId
           ? Number(form.unlockBuildingVariantId)
           : null,
@@ -841,6 +886,26 @@ export default function UnitVariantForm({ id }: UnitVariantFormProps) {
           ]}
         />
       </AdminFormField>
+
+      {(form.rangedMode === "SINGLE" || form.rangedMode === "DUAL") && (
+        <RangedWeaponSubForm
+          weapon={primaryWeapon}
+          label={
+            form.rangedMode === "DUAL" ? "Primary Weapon" : "Ranged Weapon"
+          }
+          imbuements={imbuements}
+          onChange={setPrimaryWeapon}
+        />
+      )}
+
+      {form.rangedMode === "DUAL" && (
+        <RangedWeaponSubForm
+          weapon={secondaryWeapon}
+          label="Secondary Weapon"
+          imbuements={imbuements}
+          onChange={setSecondaryWeapon}
+        />
+      )}
 
       {/* Building requirements */}
       <p className="font-display text-xs tracking-widest uppercase text-text-muted pt-2">
