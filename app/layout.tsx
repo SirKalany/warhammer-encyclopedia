@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
+import { VersionProvider } from "@/lib/VersionContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,9 +15,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-bg-base text-text-primary font-body min-h-screen">
-        <Navbar />
-        <main className="max-w-[1400px] mx-auto px-8 py-8">{children}</main>
+      <body>
+        <VersionProvider>
+          <Navbar />
+          <main
+            style={{
+              maxWidth: "1400px",
+              margin: "0 auto",
+              padding: "2rem",
+              width: "100%",
+            }}
+          >
+            {children}
+          </main>
+        </VersionProvider>
       </body>
     </html>
   );

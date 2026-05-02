@@ -1,132 +1,116 @@
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
 
+@import "tailwindcss";
+
+@theme {
+    /* Backgrounds */
+    --color-bg-base:        #0e0c0a;
+    --color-bg-surface:     #161310;
+    --color-bg-raised:      #1e1a15;
+    --color-bg-overlay:     #26211a;
+
+    /* Gold/Bronze accents */
+    --color-gold-bright:    #c9a84c;
+    --color-gold-mid:       #a07830;
+    --color-gold-dim:       #6b4f1e;
+    --color-gold-subtle:    #2e2318;
+
+    /* Text */
+    --color-text-primary:   #e8dcc8;
+    --color-text-secondary: #a89070;
+    --color-text-muted:     #6b5a45;
+
+    /* Borders */
+    --color-border-gold:    #6b4f1e;
+    --color-border-subtle:  #2a2218;
+
+    /* Font families */
+    --font-family-display:  'Cinzel', serif;
+    --font-family-body:     'Crimson Pro', serif;
+
+    /* Border radius */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 10px;
+}
+
+/* Keep CSS variables for use in plain CSS */
 :root {
-  /* Backgrounds */
-  --bg-base: #0e0c0a;
-  --bg-surface: #161310;
-  --bg-raised: #1e1a15;
-  --bg-overlay: #26211a;
-
-  /* Gold/Bronze accents */
-  --gold-bright: #c9a84c;
-  --gold-mid: #a07830;
-  --gold-dim: #6b4f1e;
-  --gold-subtle: #2e2318;
-
-  /* Text */
-  --text-primary: #e8dcc8;
-  --text-secondary: #a89070;
-  --text-muted: #6b5a45;
-  --text-inverse: #0e0c0a;
-
-  /* Borders */
-  --border-gold: #6b4f1e;
-  --border-subtle: #2a2218;
-
-  /* Status colours */
-  --status-good: #4a7c4e;
-  --status-warn: #7c6b2a;
-  --status-bad: #7c2a2a;
-
-  /* Typography */
-  --font-display: "Cinzel", serif;
-  --font-body: "Crimson Pro", serif;
-
-  /* Spacing */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-
-  /* Transitions */
-  --transition: 150ms ease;
+    --bg-base:        #0e0c0a;
+    --bg-surface:     #161310;
+    --bg-raised:      #1e1a15;
+    --bg-overlay:     #26211a;
+    --gold-bright:    #c9a84c;
+    --gold-mid:       #a07830;
+    --gold-dim:       #6b4f1e;
+    --gold-subtle:    #2e2318;
+    --text-primary:   #e8dcc8;
+    --text-secondary: #a89070;
+    --text-muted:     #6b5a45;
+    --border-gold:    #6b4f1e;
+    --border-subtle:  #2a2218;
+    --font-display:   'Cinzel', serif;
+    --font-body:      'Crimson Pro', serif;
+    --radius-sm:      4px;
+    --radius-md:      6px;
+    --radius-lg:      10px;
+    --transition:     150ms ease;
+    --status-good:    #4a7c4e;
+    --status-warn:    #7c6b2a;
+    --status-bad:     #7c2a2a;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
+html, body {
+    height: 100%;
+    width: 100%;
 }
 
 body {
-  background-color: var(--bg-base);
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.6;
-  min-height: 100vh;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    min-height: 100vh;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--gold-dim);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--gold-mid);
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-mid); }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--gold-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.2;
 }
 
-/* Typography */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  color: var(--gold-bright);
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-}
-
-h1 {
-  font-size: 2rem;
-}
-h2 {
-  font-size: 1.5rem;
-}
-h3 {
-  font-size: 1.2rem;
-}
-h4 {
-  font-size: 1rem;
-}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.2rem; }
+h4 { font-size: 1rem; }
 
 a {
-  color: var(--gold-bright);
-  text-decoration: none;
-  transition: color var(--transition);
+    color: var(--gold-bright);
+    text-decoration: none;
+    transition: color var(--transition);
 }
 
-a:hover {
-  color: var(--text-primary);
-}
+a:hover { color: var(--text-primary); }
 
-/* Gold divider */
 .divider {
-  border: none;
-  border-top: 1px solid var(--border-gold);
-  margin: 1.5rem 0;
-}
-
-/* Utility */
-.text-muted {
-  color: var(--text-muted);
-}
-.text-secondary {
-  color: var(--text-secondary);
-}
-.text-gold {
-  color: var(--gold-bright);
+    border: none;
+    border-top: 1px solid var(--border-gold);
+    margin: 1.5rem 0;
 }

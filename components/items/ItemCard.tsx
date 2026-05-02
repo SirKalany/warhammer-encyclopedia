@@ -66,7 +66,7 @@ export default function ItemCard({ item }: ItemCardProps) {
         </p>
       </div>
       {item.raceId && (
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <Badge label="Race Restricted" variant="warn" />
         </div>
       )}

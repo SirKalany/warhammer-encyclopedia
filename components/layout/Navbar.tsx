@@ -17,7 +17,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-100 bg-bg-surface border-b border-border-gold backdrop-blur-sm">
-      <div className="max-w-[1400px] mx-auto px-8 h-[60px] flex items-center gap-8">
+      <div className="max-w-350 mx-auto px-8 h-15 flex items-center gap-8">
         <Link
           href="/"
           className="flex items-center gap-2 shrink-0 no-underline"
